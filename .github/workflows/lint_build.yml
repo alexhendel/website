@@ -1,0 +1,35 @@
+name: Lint and Build
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint_build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        job: [lint, build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run lint step
+        if: matrix.job == 'lint'
+        run: yarn lint
+
+      - name: Run build step
+        if: matrix.job == 'build'
+        run: yarn build
