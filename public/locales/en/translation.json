@@ -4,5 +4,8 @@
     "blog": "Blog",
     "legal": "Legal Notice",
     "privacy": "Privacy Notice"
+  },
+  "errors": {
+    "loading": "Error loading content"
   }
 }
