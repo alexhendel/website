@@ -1,1 +1,8 @@
-{}
+{
+  "nav": {
+    "home": "Home",
+    "blog": "Blog",
+    "legal": "Legal Notice",
+    "privacy": "Privacy Notice"
+  }
+}
