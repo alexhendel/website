@@ -7,7 +7,7 @@ i18n
   .use(initReactI18next)
   .init({
     debug: import.meta.env.VITE_I18N_DEBUG || false,
-    fallbackLng: "en",
+    fallbackLng: "de",
     interpolation: {
       escapeValue: false,
     },
