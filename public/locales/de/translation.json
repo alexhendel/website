@@ -4,5 +4,8 @@
     "blog": "Blog",
     "legal": "Impressum",
     "privacy": "Datenschutz"
+  },
+  "errors": {
+    "loading": "Fehler beim Laden der Daten"
   }
 }

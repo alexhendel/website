@@ -1,16 +1,36 @@
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
+import { loadMarkdownContent, markdownKeys } from "../../utils/markdown";
+import Loading from "../../components/Loading/Loading";
+import Markdown from "../../components/Markdown/Markdown";
 
 const PrivacyNotice: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const {
+    data: content = "",
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: markdownKeys.content(i18n.language, "privacy"),
+    queryFn: () => loadMarkdownContent(i18n.language, "privacy"),
+  });
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4">
+        <div className="text-red-600">{t("errors.loading")}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-4">
-        {t("privacy.title", "Privacy Notice")}
-      </h1>
-      <div className="prose max-w-none">
-        {t("privacy.content", "Privacy notice content goes here.")}
-      </div>
+      <Markdown content={content} />
     </div>
   );
 };
