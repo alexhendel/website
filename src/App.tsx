@@ -8,6 +8,7 @@ import Blog from "./pages/Blog/Blog";
 import LegalNotice from "./pages/LegalNotice/LegalNotice";
 import PrivacyNotice from "./pages/PrivacyNotice/PrivacyNotice";
 import Nav from "./components/Nav/Nav";
+import Footer from "./components/Footer/Footer";
 
 const queryClient = new QueryClient();
 
@@ -15,9 +16,9 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
           <Nav />
-          <main className="py-8">
+          <main className="flex-grow py-8">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/blog" element={<Blog />} />
@@ -29,6 +30,7 @@ const App: React.FC = () => {
               <Route path="/datenschutz" element={<PrivacyNotice />} />
             </Routes>
           </main>
+          <Footer />
         </div>
       </Router>
       {import.meta.env.MODE !== "production" && <ReactQueryDevtools />}
