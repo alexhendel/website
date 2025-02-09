@@ -1,11 +1,23 @@
 {
   "nav": {
-    "home": "Home",
+    "home": "Startseite",
     "blog": "Blog",
     "legal": "Impressum",
-    "privacy": "Datenschutz"
+    "privacy": "Datenschutz",
+    "links": "Schnellzugriff",
+    "contact": "Kontakt"
   },
   "errors": {
-    "loading": "Fehler beim Laden der Daten"
+    "loading": "Fehler beim Laden des Inhalts"
+  },
+  "contact": {
+    "name": "Alexander Hendel",
+    "email": "alexander.hendel@gmail.com",
+    "phone": "+49 152 543 584 08",
+    "address": "Fritz-Heckert-Ring 80, 08427 Fraureuth",
+    "show": "Kontaktinformationen anzeigen"
+  },
+  "footer": {
+    "copyright": "Alle Rechte vorbehalten."
   }
 }
