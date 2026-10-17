@@ -1,0 +1,71 @@
+---
+import "../styles/global.css";
+import { getEntry } from "astro:content";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import { otherLang, routes, type Lang, type Page } from "../i18n";
+
+interface Props {
+  lang: Lang;
+  page: Page;
+  title?: string;
+}
+
+const { lang, page, title } = Astro.props;
+const site = (await getEntry("site", lang))!.data;
+const contact = (await getEntry("contact", "main"))!.data;
+const other = otherLang(lang);
+const pageTitle = title ? `${title} – ${contact.name}` : site.title;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={site.description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={new URL(routes[lang][page], Astro.site)} />
+    <link rel="alternate" hreflang={other} href={new URL(routes[other][page], Astro.site)} />
+    <script is:inline>
+      // Lets CSS hide JS-driven content (menu panels, logo intro) only when JS can reveal it again.
+      document.documentElement.dataset.js = "";
+      // Apply the saved theme before first paint; storage can be blocked, then light stays.
+      try {
+        const t = localStorage.getItem("theme");
+        if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+  </head>
+  <body class="min-h-dvh flex flex-col">
+    <header class="mx-auto w-full max-w-3xl px-4 py-4 flex items-center justify-between gap-4">
+      <a href={routes[lang].home} class="font-pixel text-fg no-underline">{contact.name}</a>
+      <nav class="flex items-center gap-4">
+        <!-- Same pixel-button look as ThemeToggle; shows the code of the language it switches to. -->
+        <a
+          href={routes[other][page]}
+          hreflang={other}
+          lang={other}
+          title={site.labels.otherLanguage}
+          class="grid place-items-center size-10 border-[3px] border-fg bg-surface text-fg shadow-pixel font-pixel text-base no-underline active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+        >
+          {/* Accessible name must start with the visible text ("EN – English") for voice control users. */}
+          <span>{other.toUpperCase()}<span class="sr-only"> – {site.labels.otherLanguage}</span></span>
+        </a>
+        <ThemeToggle label={site.labels.theme} />
+      </nav>
+    </header>
+
+    <main class="mx-auto w-full max-w-3xl px-4 pb-12 flex-1">
+      <slot />
+    </main>
+
+    <footer class="border-t-[3px] border-fg">
+      <div class="mx-auto max-w-3xl px-4 py-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
+        <span>© {new Date().getFullYear()} {contact.name}</span>
+        <a href={routes[lang].impressum}>{site.labels.imprint}</a>
+        <a href={routes[lang].datenschutz}>{site.labels.privacy}</a>
+      </div>
+    </footer>
+  </body>
+</html>

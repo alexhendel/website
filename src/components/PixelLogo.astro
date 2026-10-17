@@ -1,0 +1,129 @@
+---
+import logo from "../assets/logo.svg?raw";
+
+interface Props {
+  label: string;
+  /** Play the lead-in: start fully pixelated and resolve to the crisp logo. */
+  intro?: boolean;
+}
+const { label, intro = false } = Astro.props;
+---
+
+<div
+  data-pixel-logo
+  data-intro={intro || undefined}
+  role="img"
+  aria-label={label}
+  class:list={["relative size-40 sm:size-48 text-fg select-none", { "intro-pending": intro }]}
+>
+  <div class="logo-svg size-full" set:html={logo} />
+  <canvas class="absolute inset-0 size-full" hidden></canvas>
+</div>
+
+<style>
+  .logo-svg :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  /* Hide the crisp logo until the intro's first pixel frame is ready; without JS or with reduced motion it shows right away. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html[data-js]) .intro-pending :global(svg) {
+      visibility: hidden;
+    }
+  }
+</style>
+
+<script>
+  import logoSrc from "../assets/logo.svg?raw";
+
+  // Block size in CSS px per level. The intro starts at the last level; hover only goes up to HOVER_LEVEL.
+  const STEPS = [2, 4, 6, 8, 12, 16, 24];
+  const HOVER_LEVEL = 4; // 8 px blocks: still reads as the logo
+  const FRAME_MS = 70;
+  const INTRO_HOLD_MS = 250;
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  for (const el of reduceMotion ? [] : document.querySelectorAll<HTMLElement>("[data-pixel-logo]")) {
+    const svg = el.querySelector("svg")!;
+    const canvas = el.querySelector("canvas")!;
+    const ctx = canvas.getContext("2d")!;
+    const small = document.createElement("canvas");
+    const sctx = small.getContext("2d", { willReadFrequently: true })!;
+    let img: HTMLImageElement | undefined;
+    let imgKey = "";
+    let level = 0; // 0 = crisp SVG, STEPS.length = coarsest
+    let target = 0;
+    let timer = 0;
+
+    // <img> can't resolve currentColor, so bake the current text color into the SVG.
+    // Rasterize at the element's CSS size: even the finest level (2 px blocks) needs only half of that.
+    const ensureImage = async () => {
+      const color = getComputedStyle(el).color;
+      const size = Math.ceil(el.clientWidth);
+      const key = `${color}|${size}`;
+      if (img && imgKey === key) return;
+      const src = logoSrc.replaceAll("currentColor", color).replace("<svg", `<svg width="${size}" height="${size}"`);
+      const next = new Image();
+      next.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(src);
+      await next.decode();
+      img = next;
+      imgKey = key;
+    };
+
+    const draw = (block: number) => {
+      const size = el.clientWidth;
+      const cells = Math.max(1, Math.round(size / block));
+      small.width = small.height = cells;
+      sctx.drawImage(img!, 0, 0, cells, cells);
+      // Hard alpha threshold: every cell is either fully on or off, like real pixel art.
+      const data = sctx.getImageData(0, 0, cells, cells);
+      for (let i = 3; i < data.data.length; i += 4) data.data[i] = data.data[i] > 40 ? 255 : 0;
+      sctx.putImageData(data, 0, 0);
+
+      canvas.width = canvas.height = Math.round(size * devicePixelRatio);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(small, 0, 0, canvas.width, canvas.height);
+    };
+
+    const step = () => {
+      if (level === target) return;
+      level += Math.sign(target - level);
+      if (level > 0) draw(STEPS[level - 1]);
+      canvas.hidden = level === 0;
+      svg.style.visibility = level === 0 ? "" : "hidden";
+      timer = window.setTimeout(step, FRAME_MS);
+    };
+
+    const go = async (next: number) => {
+      await ensureImage();
+      target = next;
+      clearTimeout(timer);
+      step();
+    };
+
+    el.addEventListener("pointerenter", (e) => e.pointerType !== "touch" && go(HOVER_LEVEL));
+    el.addEventListener("pointerleave", (e) => e.pointerType !== "touch" && go(0));
+    // Touch has no hover: a tap toggles between crisp and pixelated.
+    el.addEventListener("pointerup", (e) => e.pointerType === "touch" && go(target ? 0 : HOVER_LEVEL));
+
+    if (el.dataset.intro !== undefined) {
+      (async () => {
+        await ensureImage();
+        level = target = STEPS.length;
+        draw(STEPS[level - 1]);
+        canvas.hidden = false;
+        svg.style.visibility = "hidden";
+        el.classList.remove("intro-pending");
+        // Only resolve if a hover hasn't already taken over.
+        timer = window.setTimeout(() => target === STEPS.length && go(0), INTRO_HOLD_MS);
+      })().catch(() => el.classList.remove("intro-pending"));
+    }
+
+    // A theme switch while pixelated would leave the canvas in the old color.
+    new MutationObserver(async () => {
+      if (level === 0) return;
+      await ensureImage();
+      draw(STEPS[level - 1]);
+    }).observe(document.documentElement, { attributeFilter: ["data-theme"] });
+  }
+</script>

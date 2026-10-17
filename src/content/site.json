@@ -1,0 +1,42 @@
+{
+  "de": {
+    "title": "Alexander Hendel – Softwareentwicklung & IT",
+    "description": "Freiberufliche Softwareentwicklung und IT-Unterstützung von Alexander Hendel.",
+    "pitch": "Freiberufliche Softwareentwicklung und IT-Unterstützung – pragmatisch, zuverlässig, auf den Punkt.",
+    "servicesTitle": "Leistungen",
+    "services": [
+      "Web- und Softwareentwicklung",
+      "IT-Beratung und Support",
+      "Automatisierung und Integration"
+    ],
+    "contactTitle": "Kontakt",
+    "labels": {
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "imprint": "Impressum",
+      "privacy": "Datenschutz",
+      "theme": "Dunkles Farbschema",
+      "otherLanguage": "English"
+    }
+  },
+  "en": {
+    "title": "Alexander Hendel – Software Development & IT",
+    "description": "Freelance software development and IT support by Alexander Hendel, based in Fraureuth, Germany.",
+    "pitch": "Freelance software development and IT support – pragmatic, reliable, to the point.",
+    "servicesTitle": "Services",
+    "services": [
+      "Web and software development",
+      "IT consulting and support",
+      "Automation and integration"
+    ],
+    "contactTitle": "Contact",
+    "labels": {
+      "email": "Email",
+      "phone": "Phone",
+      "imprint": "Imprint",
+      "privacy": "Privacy",
+      "theme": "Dark color scheme",
+      "otherLanguage": "Deutsch"
+    }
+  }
+}

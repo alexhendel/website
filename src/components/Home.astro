@@ -1,0 +1,168 @@
+---
+import { getEntry } from "astro:content";
+import Base from "../layouts/Base.astro";
+import PixelLogo from "./PixelLogo.astro";
+import type { Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const site = (await getEntry("site", lang))!.data;
+const contact = (await getEntry("contact", "main"))!.data;
+const options = [
+  { id: "services", title: site.servicesTitle },
+  { id: "contact", title: site.contactTitle },
+];
+---
+
+<Base lang={lang} page="home">
+  <section class="flex flex-col items-center text-center gap-6 py-12">
+    <PixelLogo label={`Logo ${contact.name}`} intro />
+    <div>
+      <h1 class="text-3xl sm:text-4xl">{contact.name}</h1>
+      <p class="mt-4 mx-auto max-w-xl text-lg text-muted">{site.pitch}</p>
+    </div>
+  </section>
+
+  <!-- Zelda-style menu: hover, focus, click or arrow keys move the cursor; the selected option's details slide out. -->
+  <div data-menu class="grid justify-center gap-6 sm:grid-cols-[auto_20rem] sm:gap-10">
+    <div role="tablist" class="flex justify-center gap-6 sm:flex-col sm:justify-start sm:gap-4 sm:pt-5">
+      {
+        options.map((o, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`tab-${o.id}`}
+            aria-controls={`panel-${o.id}`}
+            aria-selected={i === 0 ? "true" : "false"}
+            tabindex={i === 0 ? 0 : -1}
+            class="option font-pixel text-xl text-left cursor-pointer"
+          >
+            {o.title}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="panels grid">
+      <section
+        id="panel-services"
+        role="tabpanel"
+        aria-labelledby="tab-services"
+        data-active
+        class="panel border-[3px] border-fg bg-surface shadow-pixel p-5"
+      >
+        <ul class="space-y-2">
+          {site.services.map((s) => <li class="before:content-['▪'] before:text-accent before:mr-2">{s}</li>)}
+        </ul>
+      </section>
+
+      <section
+        id="panel-contact"
+        role="tabpanel"
+        aria-labelledby="tab-contact"
+        class="panel border-[3px] border-fg bg-surface shadow-pixel p-5"
+      >
+        <dl class="space-y-2">
+          <div>
+            <dt class="text-sm text-muted">{site.labels.email}</dt>
+            <dd><a href={`mailto:${contact.email}`}>{contact.email}</a></dd>
+          </div>
+          <div>
+            <dt class="text-sm text-muted">{site.labels.phone}</dt>
+            <dd><a href={`tel:${contact.phoneHref}`}>{contact.phone}</a></dd>
+          </div>
+        </dl>
+        <ul class="flex gap-4 mt-4">
+          {contact.links.map((l) => <li><a href={l.href} rel="me noopener">{l.label}</a></li>)}
+        </ul>
+      </section>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .option {
+    color: var(--muted);
+  }
+  .option[aria-selected="true"] {
+    color: var(--fg);
+  }
+  .option::before {
+    content: ">" / "";
+    display: inline-block;
+    width: 1.25em;
+    color: var(--accent);
+    visibility: hidden;
+  }
+  .option[aria-selected="true"]::before {
+    visibility: visible;
+  }
+
+  /* Without JS every panel stays visible and stacked; with JS they share one cell so the layout never jumps. */
+  :global(html[data-js]) .panels > .panel {
+    grid-area: 1 / 1;
+  }
+  :global(html[data-js]) .panel:not([data-active]) {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(-1.5rem);
+  }
+  .panel {
+    transition:
+      opacity 240ms ease-out,
+      transform 240ms steps(6),
+      visibility 240ms;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .option[aria-selected="true"]::before {
+      animation: cursor-bob 600ms steps(2) infinite alternate;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .panel {
+      transition: none;
+    }
+  }
+  @keyframes cursor-bob {
+    to {
+      transform: translateX(4px);
+    }
+  }
+</style>
+
+<script>
+  for (const menu of document.querySelectorAll<HTMLElement>("[data-menu]")) {
+    const tabs = [...menu.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+
+    const select = (tab: HTMLButtonElement, focus = false) => {
+      for (const t of tabs) {
+        const on = t === tab;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute("aria-controls")!)!;
+        panel.toggleAttribute("data-active", on);
+        panel.inert = !on;
+      }
+      if (focus) tab.focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("pointerenter", () => select(tab));
+      tab.addEventListener("focus", () => select(tab));
+      tab.addEventListener("click", () => select(tab));
+      tab.addEventListener("keydown", (e) => {
+        // All four arrows work: the menu is a row on phones and a column on wider screens.
+        const d = ({ ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 } as Record<string, number>)[e.key];
+        if (!d) return;
+        e.preventDefault();
+        select(tabs[(i + d + tabs.length) % tabs.length], true);
+      });
+    });
+
+    select(tabs.find((t) => t.getAttribute("aria-selected") === "true") ?? tabs[0]);
+  }
+</script>

@@ -1,0 +1,21 @@
+---
+import { getEntry, render } from "astro:content";
+import Base from "../layouts/Base.astro";
+import type { Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+  page: "impressum" | "datenschutz";
+}
+
+const { lang, page } = Astro.props;
+const entry = (await getEntry("legal", `${lang}/${page}`))!;
+const { Content } = await render(entry);
+---
+
+<Base lang={lang} page={page} title={entry.data.title}>
+  <article class="legal py-8">
+    <h1 class="text-2xl sm:text-3xl break-words">{entry.data.title}</h1>
+    <Content />
+  </article>
+</Base>

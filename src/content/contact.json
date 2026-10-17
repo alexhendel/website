@@ -1,0 +1,12 @@
+{
+  "main": {
+    "name": "Alexander Hendel",
+    "email": "info@alex-hendel.de",
+    "phone": "+49 152 543 584 08",
+    "phoneHref": "+4915254358408",
+    "links": [
+      { "label": "GitHub", "href": "https://github.com/alexhendel" },
+      { "label": "LinkedIn", "href": "https://www.linkedin.com/in/alexhendel/" }
+    ]
+  }
+}

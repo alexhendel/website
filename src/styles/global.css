@@ -1,0 +1,114 @@
+@import "tailwindcss";
+@import "@fontsource/silkscreen/latin-400.css";
+
+:root {
+  --bg: #f6f1e7;
+  --fg: #1d1b29;
+  --muted: #5b5668;
+  --accent: #b0185a;
+  --surface: #fffaf0;
+}
+
+:root[data-theme="dark"] {
+  --bg: #15131f;
+  --fg: #ece6d8;
+  --muted: #a7a1b4;
+  --accent: #ff7ab2;
+  --surface: #1f1c2c;
+}
+
+@theme {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-surface: var(--surface);
+  --font-pixel: "Silkscreen", ui-monospace, monospace;
+  --shadow-pixel: 4px 4px 0 var(--fg);
+}
+
+html {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* Soft crossfade between pages (cross-document View Transitions, no JS); header and footer stay put. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 350ms;
+  animation-timing-function: ease-in-out;
+}
+body > header {
+  view-transition-name: site-header;
+}
+body > footer {
+  view-transition-name: site-footer;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-pixel);
+  line-height: 1.2;
+}
+
+/* In the base layer so utility classes (e.g. text-fg on the language button) can override it. */
+@layer base {
+  a {
+    color: var(--accent);
+    text-underline-offset: 3px;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Rendered markdown (legal pages); replaces @tailwindcss/typography for ~4 elements. */
+.legal h2 {
+  font-size: 1.125rem;
+  margin: 2rem 0 0.5rem;
+}
+.legal p {
+  margin: 0.75rem 0;
+  line-height: 1.65;
+}
+.legal code {
+  font-size: 0.9em;
+}
+.legal h3 {
+  font-size: 1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+.legal ul {
+  list-style: square;
+  padding-left: 1.25rem;
+  margin: 0.75rem 0;
+}
+.legal li {
+  margin: 0.4rem 0;
+  line-height: 1.65;
+}
+.legal li::marker {
+  color: var(--accent);
+}
+.legal a {
+  overflow-wrap: anywhere; /* long generator URLs would overflow on phones */
+}
+.legal .seal {
+  margin-top: 2.5rem;
+  font-size: 0.875rem;
+}

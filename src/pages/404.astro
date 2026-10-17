@@ -1,0 +1,12 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<!-- GitHub Pages serves one 404.html for every language, so it shows both. -->
+<Base lang="de" page="home" title="404">
+  <section class="py-16 text-center">
+    <h1 class="text-5xl text-accent">404</h1>
+    <p class="mt-6">Diese Seite gibt es nicht. <a href="/">Zur Startseite</a></p>
+    <p class="mt-2" lang="en">This page does not exist. <a href="/en/">Back to home</a></p>
+  </section>
+</Base>
