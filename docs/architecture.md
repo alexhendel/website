@@ -86,6 +86,7 @@ Components read them with `getEntry("site", lang)`, `getEntry("contact", "main")
 - Tailwind's `@theme` maps them to classes (`bg-bg`, `text-fg`, `text-accent`, `shadow-pixel`, `font-pixel`), so components never need `dark:` variants: switching the attribute recolors everything.
 - The global link color sits in `@layer base`, so utility classes on a link (e.g. `text-fg`) win.
 - Pixel look: `border-[3px] border-fg`, `shadow-pixel` (4 px hard offset shadow), no rounded corners, `steps()` timing for motion.
+- `pixel-button` (a Tailwind `@utility` in `global.css`) is the shared square button style for the theme toggle, language switch and back-to-top link.
 
 ## Head script and `data-js`
 

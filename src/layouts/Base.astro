@@ -39,7 +39,7 @@ const pageTitle = title ? `${title} – ${contact.name}` : site.title;
   </head>
   <body class="min-h-dvh flex flex-col">
     <header class="mx-auto w-full max-w-3xl px-4 py-4 flex items-center justify-between gap-4">
-      <a href={routes[lang].home} class="font-pixel text-fg no-underline">{contact.name}</a>
+      <a href={routes[lang].home} class="font-pixel text-base min-[360px]:text-lg sm:text-2xl text-fg no-underline">{contact.name}</a>
       <nav class="flex items-center gap-4">
         <!-- Same pixel-button look as ThemeToggle; shows the code of the language it switches to. -->
         <a
@@ -47,7 +47,7 @@ const pageTitle = title ? `${title} – ${contact.name}` : site.title;
           hreflang={other}
           lang={other}
           title={site.labels.otherLanguage}
-          class="grid place-items-center size-10 border-[3px] border-fg bg-surface text-fg shadow-pixel font-pixel text-base no-underline active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+          class="pixel-button font-pixel text-base"
         >
           {/* Accessible name must start with the visible text ("EN – English") for voice control users. */}
           <span>{other.toUpperCase()}<span class="sr-only"> – {site.labels.otherLanguage}</span></span>

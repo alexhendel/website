@@ -16,7 +16,8 @@
       "imprint": "Impressum",
       "privacy": "Datenschutz",
       "theme": "Dunkles Farbschema",
-      "otherLanguage": "English"
+      "otherLanguage": "English",
+      "backToTop": "Nach oben"
     }
   },
   "en": {
@@ -36,7 +37,8 @@
       "imprint": "Imprint",
       "privacy": "Privacy",
       "theme": "Dark color scheme",
-      "otherLanguage": "Deutsch"
+      "otherLanguage": "Deutsch",
+      "backToTop": "Back to top"
     }
   }
 }
