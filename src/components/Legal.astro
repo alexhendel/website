@@ -10,12 +10,32 @@ interface Props {
 
 const { lang, page } = Astro.props;
 const entry = (await getEntry("legal", `${lang}/${page}`))!;
+const site = (await getEntry("site", lang))!.data;
 const { Content } = await render(entry);
 ---
 
 <Base lang={lang} page={page} title={entry.data.title}>
-  <article class="legal py-8">
+  <article class="legal pt-8 pb-20">
     <h1 class="text-2xl sm:text-3xl break-words">{entry.data.title}</h1>
     <Content />
   </article>
+
+  {/* "#top" scrolls to the start of the page without needing a target element (HTML spec), so it works without JS. */}
+  <a href="#top" class="back-to-top pixel-button" aria-label={site.labels.backToTop} title={site.labels.backToTop}>
+    <!-- 16×16 pixel arrow, drawn at 2× like the theme icons -->
+    <svg viewBox="0 0 16 16" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true">
+      <path fill="currentColor" d="M7 3h2v1h-2z M6 4h4v1h-4z M5 5h6v1h-6z M4 6h8v1h-8z M3 7h10v1h-10z M6 8h4v5h-4z"></path>
+    </svg>
+  </a>
 </Base>
+
+<style>
+  /* Fixed to the viewport, just right of the max-w-3xl (48rem) column so it never covers text on wide screens;
+     on narrow screens it falls back to the 1rem page gutter. */
+  .back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: max(1rem, calc(50vw - 24rem - 3.5rem));
+    z-index: 10;
+  }
+</style>

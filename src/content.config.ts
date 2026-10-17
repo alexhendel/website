@@ -19,6 +19,7 @@ const site = defineCollection({
       privacy: z.string(),
       theme: z.string(),
       otherLanguage: z.string(),
+      backToTop: z.string(),
     }),
   }),
 });

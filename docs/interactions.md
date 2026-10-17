@@ -62,7 +62,16 @@ Built as an ARIA tabs widget: a `tablist` of `button role="tab"`, each controlli
 
 ## Language button — `src/layouts/Base.astro`
 
-A link styled like the theme toggle. It shows the code of the target language (`EN` on German pages, `DE` on English pages), has `aria-label` "English"/"Deutsch" and `hreflang`, and goes to the same page in the other language.
+A link styled like the theme toggle. It shows the code of the target language (`EN` on German pages, `DE` on English pages), is announced as "EN – English" / "DE – Deutsch" (visible code plus screen-reader-only text, so voice control can target what it sees), has `hreflang`, and goes to the same page in the other language.
+
+## Back-to-top button — `src/components/Legal.astro`
+
+Only on the legal pages (Impressum, Datenschutz, both languages). A pixel button with a 16×16 arrow, fixed to the bottom right and always visible.
+
+- It is a plain link to `#top`: per the HTML spec that scrolls to the start of the page without a target element, so it works without JavaScript.
+- Scrolling is smooth via `scroll-behavior: smooth` on `html`, switched off with reduced motion. This also smooths the table-of-contents links.
+- On wide screens it sits just right of the text column so it never covers text; on phones it falls back to the 1 rem page gutter.
+- Labelled "Nach oben" / "Back to top" (`labels.backToTop` in `site.json`).
 
 ## Page transitions — `src/styles/global.css`
 
