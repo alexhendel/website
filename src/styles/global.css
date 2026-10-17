@@ -47,6 +47,9 @@
 
 html {
   color-scheme: light;
+  /* Short pages (home) have no scrollbar, long ones (legal) do; reserving the gutter keeps the header the same
+     width everywhere, so the view transition doesn't stretch its snapshot and the text doesn't appear to resize. */
+  scrollbar-gutter: stable;
 }
 @media (prefers-reduced-motion: no-preference) {
   html {
